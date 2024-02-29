@@ -58,7 +58,7 @@ class OasDiscoveryController @Inject()(
   def forward: Action[ByteString] = Action(parse.byteString).async {
     implicit request =>
       var builder = httpClient
-        .httpVerb(request.method, request.path.replaceFirst("/oas-discovery-api-proxy", ""))
+        .httpVerb(request.method, request.path.replaceFirst("/oas-discovery-proxy", ""))
 
       request.headers.get(CONTENT_TYPE) match {
         case Some(ContentTypes.JSON) =>

@@ -56,7 +56,7 @@ class OasDiscoveryControllerSpec extends AsyncFreeSpec
 
       val fixture = buildApplication()
       running(fixture.application) {
-        val request = FakeRequest(GET, "/oas-discovery-api-proxy/v1/oas-deployments")
+        val request = FakeRequest(GET, "/oas-discovery-proxy/v1/oas-deployments")
           .withHeaders(FakeHeaders(Seq(
             (AUTHORIZATION, "Basic dGVzdC1lbXMtY2xpZW50LWlkOnRlc3QtZW1zLXNlY3JldA=="),
             (ACCEPT, "application/json")
@@ -82,7 +82,7 @@ class OasDiscoveryControllerSpec extends AsyncFreeSpec
 
       val fixture = buildApplication()
       running(fixture.application) {
-        val request = FakeRequest(GET, "/oas-discovery-api-proxy/v1/oas-deployments")
+        val request = FakeRequest(GET, "/oas-discovery-proxy/v1/oas-deployments")
           .withHeaders(FakeHeaders(Seq(
             (xApiKeyHeaderName, "test-api-key")
           )))
@@ -115,7 +115,7 @@ class OasDiscoveryControllerSpec extends AsyncFreeSpec
 
       val fixture = buildApplication()
       running(fixture.application) {
-        val request = FakeRequest(PUT, "/oas-discovery-api-proxy/deploy-now/1234")
+        val request = FakeRequest(PUT, "/oas-discovery-proxy/deploy-now/1234")
           .withHeaders(FakeHeaders(Seq(
             (AUTHORIZATION, "Basic dGVzdC1lbXMtY2xpZW50LWlkOnRlc3QtZW1zLXNlY3JldA=="),
             (ACCEPT, "application/json"),
