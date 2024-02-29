@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.oasdiscoveryproxy.config
+package uk.gov.hmrc.oasdiscoveryproxy.service
 
-import play.api.Configuration
+import play.api.Logging
+import play.api.http.HeaderNames
+import play.api.libs.ws.WSRequest
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Singleton
 
 @Singleton
-class AppConfig @Inject()(config: Configuration) {
+class AuthorizationDecorator extends Logging {
 
-  val appName: String = config.get[String]("appName")
+  def decorate(wsRequest: WSRequest, maybeAuthHeader: Option[String]) : WSRequest = {
+    if (!wsRequest.headers.contains(HeaderNames.AUTHORIZATION) && maybeAuthHeader.isDefined) {
+      logger.info("Outbound request has no auth header, setting explicitly from inbound.")
+      wsRequest.addHttpHeaders((HeaderNames.AUTHORIZATION, maybeAuthHeader.get))
+    } else {
+      wsRequest
+    }
+  }
+
 }
