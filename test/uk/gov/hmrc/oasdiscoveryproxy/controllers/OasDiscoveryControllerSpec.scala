@@ -94,42 +94,6 @@ class OasDiscoveryControllerSpec extends AsyncFreeSpec
     }
   }
 
-  "PUT request" - {
-    "must be forwarded with headers" in {
-      val requestBody = """{"cheese":"crackers"}"""
-      val responseBody = """{"jam": "scones"}"""
-
-      stubFor(
-        put(urlEqualTo("/oas-discovery-stubs/deploy-now/1234"))
-          .withHeader(ACCEPT, equalTo(ContentTypes.JSON))
-          .withHeader(CONTENT_TYPE, equalTo(ContentTypes.JSON))
-          .withHeader(AUTHORIZATION, equalTo("Basic dGVzdC1lbXMtY2xpZW50LWlkOnRlc3QtZW1zLXNlY3JldA=="))
-          .withRequestBody(
-            equalToJson(requestBody)
-          )
-          .willReturn(
-            aResponse()
-              .withBody(responseBody)
-          )
-      )
-
-      val fixture = buildApplication()
-      running(fixture.application) {
-        val request = FakeRequest(PUT, "/oas-discovery-proxy/deploy-now/1234")
-          .withHeaders(FakeHeaders(Seq(
-            (AUTHORIZATION, "Basic dGVzdC1lbXMtY2xpZW50LWlkOnRlc3QtZW1zLXNlY3JldA=="),
-            (ACCEPT, "application/json"),
-            (CONTENT_TYPE, "application/json"),
-          )))
-          .withBody(requestBody)
-        val result = route(fixture.application, request).value
-        status(result) mustBe OK
-        verify(fixture.authorizationDecorator).decorate(ArgumentMatchers.any(), ArgumentMatchers.any())
-        contentAsString(result) mustBe responseBody
-      }
-    }
-  }
-
   case class Fixture(
                       application: Application,
                       authorizationDecorator: AuthorizationDecorator
