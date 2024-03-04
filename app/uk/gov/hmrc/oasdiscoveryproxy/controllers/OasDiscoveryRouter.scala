@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.oasdiscoveryproxy.config
+package uk.gov.hmrc.oasdiscoveryproxy.controllers
 
-import play.api.Configuration
+import play.api.routing.Router.Routes
+import play.api.routing.SimpleRouter
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 
-@Singleton
-class AppConfig @Inject()(config: Configuration) {
+class OasDiscoveryRouter @Inject()(oasDiscoveryController: OasDiscoveryController) extends SimpleRouter {
 
-  val appName: String = config.get[String]("appName")
+  override def routes: Routes = {
+    case _ => oasDiscoveryController.forward
+  }
+
 }
