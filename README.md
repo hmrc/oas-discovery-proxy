@@ -19,10 +19,10 @@ The full set of dependencies can be started using Service Manager and the group 
 
 You can view service dependencies using the Tax Catalogue's Service Relationships
 section here:
-https://catalogue.tax.service.gov.uk/service/identity-management-service-proxy
+https://catalogue.tax.service.gov.uk/service/oas-discovery-proxy
 
 ### OAS Discovery API
-All requests to this service starting with are forwarded to IDMS. 
+All requests to this service starting with are forwarded to OAS Discovery API. 
 The incoming `Authorization` header is passed on. This
 service does not add authorisation.
 
