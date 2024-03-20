@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.identitymanagementserviceproxy.controller
+package uk.gov.hmrc.oasdiscoveryproxy.controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{status => _, _}
 import org.mockito.{ArgumentMatchers, MockitoSugar}
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AsyncFreeSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.ContentTypes
 import play.api.http.Status.OK
 import play.api.inject.bind
@@ -38,7 +39,8 @@ class OasDiscoveryControllerSpec extends AsyncFreeSpec
   with WireMockSupport
   with HttpClientV2Support
   with OptionValues
-  with MockitoSugar {
+  with MockitoSugar
+  with TableDrivenPropertyChecks {
 
   "GET request" - {
     "must be forwarded with headers" in {
@@ -90,6 +92,32 @@ class OasDiscoveryControllerSpec extends AsyncFreeSpec
         val result = route(fixture.application, request).value
 
         status(result) mustBe OK
+      }
+    }
+
+    "must work for all configured APIs" in {
+      val apis = Table(
+        "API",
+        "/v1/oas-deployments",
+        "/v1/simple-api-deployment"
+      )
+
+      val fixture = buildApplication()
+      running(fixture.application) {
+        forAll(apis) {
+          api =>
+            stubFor(
+              get(urlEqualTo(s"/oas-discovery-stubs$api/test-endpoint"))
+                .willReturn(
+                  aResponse()
+                )
+            )
+
+            val request = FakeRequest(GET, s"/oas-discovery-proxy$api/test-endpoint")
+            val result = route(fixture.application, request).value
+
+            status(result) mustBe OK
+        }
       }
     }
   }
