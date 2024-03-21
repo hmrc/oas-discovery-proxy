@@ -1,2 +1,3 @@
 # microservice specific routes
 -> /v1/oas-deployments uk.gov.hmrc.oasdiscoveryproxy.controllers.OasDiscoveryRouter
+-> /v1/simple-api-deployment uk.gov.hmrc.oasdiscoveryproxy.controllers.OasDiscoveryRouter
