@@ -42,6 +42,8 @@ class OasDiscoveryController @Inject()(
     def httpVerb(method: String, relativePath: String)(implicit hc: HeaderCarrier): RequestBuilder = {
       val url = url"${s"$targetUrl$relativePath"}"
 
+      logger.info(s"Forwarding $method request to resolved path: ${url.toString}")
+
       method match {
         case "GET" => httpClient.get(url)
         case "POST" => httpClient.post(url)
@@ -57,6 +59,7 @@ class OasDiscoveryController @Inject()(
 
   def forward: Action[ByteString] = Action(parse.byteString).async {
     implicit request =>
+      logger.info(s"Received ${request.method} request for path ${request.path}")
       var builder = httpClient
         .httpVerb(request.method, request.path.replaceFirst("/oas-discovery-proxy", ""))
 
@@ -75,7 +78,8 @@ class OasDiscoveryController @Inject()(
 
       builder.execute[HttpResponse]
         .map(
-          response =>
+          response => {
+            logger.info(s"Received response code ${response.status} and body ${response.body}")
             Result(
               ResponseHeader(
                 status = response.status,
@@ -83,6 +87,7 @@ class OasDiscoveryController @Inject()(
               ),
               body = buildBody(response.body, response.headers)
             )
+          }
         )
   }
 
