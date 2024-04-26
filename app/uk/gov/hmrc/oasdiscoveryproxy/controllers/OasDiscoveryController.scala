@@ -64,8 +64,8 @@ class OasDiscoveryController @Inject()(
         .httpVerb(request.method, request.path.replaceFirst("/oas-discovery-proxy", ""))
 
       request.headers.get(CONTENT_TYPE) match {
-        case Some(ContentTypes.JSON) =>
-          builder = builder.withBody(Json.parse(request.body.toArray))
+        case Some(contentType) =>
+          builder = builder.setHeader(CONTENT_TYPE -> contentType).withBody(request.body)
         case _ =>
           builder = builder.withBody(request.body)
       }
