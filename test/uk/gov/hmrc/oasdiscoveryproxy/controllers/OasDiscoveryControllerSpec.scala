@@ -26,7 +26,7 @@ import play.api.http.ContentTypes
 import play.api.http.Status.OK
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.Helpers._
+import play.api.test.Helpers.{ACCEPT, _}
 import play.api.test.{FakeHeaders, FakeRequest}
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -118,6 +118,35 @@ class OasDiscoveryControllerSpec extends AsyncFreeSpec
 
             status(result) mustBe OK
         }
+      }
+    }
+
+    "must preserve content type header when present" in {
+      val responseBody = """{"jam": "scones"}"""
+
+      stubFor(
+        post(urlEqualTo("/oas-discovery-stubs/v1/oas-deployments"))
+          .withHeader(ACCEPT, equalTo(ContentTypes.JSON))
+          .withHeader(CONTENT_TYPE, equalTo(ContentTypes.FORM))
+          .withHeader(AUTHORIZATION, equalTo("Basic dGVzdC1lbXMtY2xpZW50LWlkOnRlc3QtZW1zLXNlY3JldA=="))
+          .willReturn(
+            aResponse()
+              .withBody(responseBody)
+          )
+      )
+
+      val fixture = buildApplication()
+      running(fixture.application) {
+        val request = FakeRequest(POST, "/oas-discovery-proxy/v1/oas-deployments")
+          .withHeaders(FakeHeaders(Seq(
+            (ACCEPT, "application/json"),
+            (CONTENT_TYPE, ContentTypes.FORM),
+            (AUTHORIZATION, "Basic dGVzdC1lbXMtY2xpZW50LWlkOnRlc3QtZW1zLXNlY3JldA==")
+          )))
+        val result = route(fixture.application, request).value
+
+        status(result) mustBe OK
+        contentAsString(result) mustBe responseBody
       }
     }
   }
