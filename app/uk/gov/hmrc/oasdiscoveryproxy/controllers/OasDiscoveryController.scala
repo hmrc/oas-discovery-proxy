@@ -20,6 +20,7 @@ import org.apache.pekko.util.{ByteString, CompactByteString}
 import play.api.Logging
 import play.api.http.{ContentTypes, HttpEntity}
 import play.api.libs.json.Json
+import play.api.libs.ws.DefaultBodyWritables.writeableOf_Bytes
 import play.api.mvc._
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
