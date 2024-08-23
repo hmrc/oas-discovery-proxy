@@ -17,11 +17,13 @@
 package uk.gov.hmrc.oasdiscoveryproxy.controllers
 
 import com.github.tomakehurst.wiremock.client.WireMock.{status => _, _}
-import org.mockito.{ArgumentMatchers, MockitoSugar}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{spy, verify}
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AsyncFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.ContentTypes
 import play.api.http.Status.OK
 import play.api.inject.bind
@@ -66,7 +68,7 @@ class OasDiscoveryControllerSpec extends AsyncFreeSpec
         val result = route(fixture.application, request).value
 
         status(result) mustBe OK
-        verify(fixture.authorizationDecorator).decorate(ArgumentMatchers.any(), ArgumentMatchers.any())
+        verify(fixture.authorizationDecorator).decorate(any(), any())
         contentAsString(result) mustBe responseBody
       }
     }
@@ -165,7 +167,7 @@ class OasDiscoveryControllerSpec extends AsyncFreeSpec
       ))
     )
 
-    val decorator = spy(new AuthorizationDecorator,lenient = true)
+    val decorator = spy(new AuthorizationDecorator)
 
     val build = new GuiceApplicationBuilder()
       .overrides(

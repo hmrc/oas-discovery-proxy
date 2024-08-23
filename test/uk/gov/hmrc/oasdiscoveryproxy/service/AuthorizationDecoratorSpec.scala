@@ -16,10 +16,11 @@
 
 package uk.gov.hmrc.oasdiscoveryproxy.service
 
-import org.mockito.ArgumentMatchers.any
-import org.mockito.{ArgumentMatchers, MockitoSugar}
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.ws.WSRequest
 import play.api.test.Helpers.{ACCEPT, AUTHORIZATION}
 
@@ -45,7 +46,7 @@ class AuthorizationDecoratorSpec extends AnyFreeSpec
       when(wsRequest.addHttpHeaders((AUTHORIZATION, "test-authorization"))).thenReturn(wsRequest)
       decorator.decorate(wsRequest, Some("test-authorization"))
 
-      verify(wsRequest).addHttpHeaders(ArgumentMatchers.eq((AUTHORIZATION, "test-authorization")))
+      verify(wsRequest).addHttpHeaders((AUTHORIZATION, "test-authorization"))
     }
 
     "must not update the request if there isn't an Authorization header in the inbound request" in {
